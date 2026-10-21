@@ -11,9 +11,11 @@ WORKDIR /app
 RUN groupadd --system hms && useradd --system --gid hms --home-dir /app hms
 COPY --from=build --chown=hms:hms /workspace/backend/target/hms-1.0.0.jar /app/hms.jar
 COPY --chown=hms:hms deploy/start-render.sh /app/start-render.sh
+COPY --chown=hms:hms deploy/aiven-ca.crt /app/aiven-ca.crt
 RUN chmod 0555 /app/start-render.sh
 USER hms
 ENV SPRING_PROFILES_ACTIVE=render
+ENV DB_CA_CERT_FILE=/app/aiven-ca.crt
 ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=60 -XX:+UseSerialGC"
 EXPOSE 10000
 ENTRYPOINT ["/app/start-render.sh"]
