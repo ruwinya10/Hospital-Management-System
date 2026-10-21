@@ -1,0 +1,16 @@
+# Only files explicitly copied by the Dockerfile are required in the image.
+.git
+.local
+**/node_modules
+**/dist
+**/target
+**/.env
+**/.env.*
+**/*.log
+**/*.sql
+**/*.dump
+**/*.pem
+**/*.p12
+**/*.key
+.vercel
+frontend/.vercel
