@@ -12,15 +12,21 @@ case "$DB_URL" in
   *) echo 'DB_URL must be a JDBC MySQL URL with sslMode=VERIFY_IDENTITY.' >&2; exit 1 ;;
 esac
 
-# Render secret files are mounted at /etc/secrets. This is a public CA certificate,
-# never a database password. It enables server certificate and hostname checks.
-ca_file="${DB_CA_CERT_FILE:-/etc/secrets/aiven-ca.pem}"
-if [ ! -r "$ca_file" ]; then
-  echo 'Add the Aiven CA certificate as a Render secret file named aiven-ca.pem.' >&2
-  exit 1
-fi
+# Accept a base64-encoded public CA certificate on hosts without secret files.
 umask 077
 trust_dir=$(mktemp -d /tmp/hms-tls.XXXXXX)
+ca_file="${DB_CA_CERT_FILE:-/etc/secrets/aiven-ca.pem}"
+if [ -n "${DB_CA_CERT_BASE64:-}" ]; then
+  ca_file="$trust_dir/aiven-ca.pem"
+  if ! printf '%s' "$DB_CA_CERT_BASE64" | base64 --decode > "$ca_file"; then
+    echo 'DB_CA_CERT_BASE64 must contain the base64-encoded Aiven CA certificate.' >&2
+    exit 1
+  fi
+fi
+if [ ! -r "$ca_file" ]; then
+  echo 'Set DB_CA_CERT_BASE64 or provide an Aiven CA certificate file via DB_CA_CERT_FILE.' >&2
+  exit 1
+fi
 keytool -importcert -noprompt -alias aiven-mysql -file "$ca_file" \
   -keystore "$trust_dir/truststore.p12" -storetype PKCS12 -storepass changeit >/dev/null
 # The truststore contains public certificates only; its password is not a credential.
