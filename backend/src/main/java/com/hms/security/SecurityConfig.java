@@ -28,10 +28,11 @@ import java.nio.charset.StandardCharsets;import java.util.*;
   http.csrf(c->c.disable()).cors(c->{}).sessionManagement(s->s.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
   .authorizeHttpRequests(a->a.dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll().requestMatchers("/api/auth/login","/actuator/health").permitAll().requestMatchers(HttpMethod.OPTIONS,"/**").permitAll().anyRequest().authenticated())
   .addFilterBefore(new org.springframework.web.filter.OncePerRequestFilter(){@Override protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain)throws java.io.IOException,ServletException{
-   String h=req.getHeader("Authorization");if(h!=null&&h.startsWith("Bearer ")){try{String username=Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(h.substring(7)).getPayload().getSubject();users.findByUsername(username).filter(u->u.enabled&&isStaff(u)).ifPresent(u->{List<SimpleGrantedAuthority> roles=u.roles.stream().map(r->new SimpleGrantedAuthority("ROLE_"+r.name)).toList();SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username,null,roles));});}catch(Exception ignored){}}
+   String h=req.getHeader("Authorization");if(h!=null&&h.startsWith("Bearer ")){try{String username=Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(h.substring(7)).getPayload().getSubject();users.findByUsername(username).filter(u->u.enabled&&!u.deleted&&isStaff(u)).ifPresent(u->{List<SimpleGrantedAuthority> roles=u.roles.stream().map(r->new SimpleGrantedAuthority("ROLE_"+r.name)).toList();SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username,null,roles));});}catch(Exception ignored){}}
    chain.doFilter(req,res);
   }},UsernamePasswordAuthenticationFilter.class);
  return http.build();}
  public String token(String username){if(secret.length()<32)throw new IllegalStateException("JWT_SECRET must be at least 32 characters");return Jwts.builder().subject(username).issuedAt(new Date()).expiration(new Date(System.currentTimeMillis()+30*60*1000)).signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))).compact();}
 }
+
 

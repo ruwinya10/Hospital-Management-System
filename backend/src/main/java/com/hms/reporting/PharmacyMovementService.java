@@ -15,10 +15,11 @@ import java.util.*;
 @Service public class PharmacyMovementService {
  private final EntityManager em;private final ObjectMapper json;private final AnalyticsService reports;
  public PharmacyMovementService(EntityManager em,ObjectMapper json,AnalyticsService reports){this.em=em;this.json=json;this.reports=reports;}
- public record MovementInput(@NotNull Long medicineId,@NotBlank String type,@NotNull @DecimalMin("0.001") @DecimalMax("999999999") @Digits(integer=9,fraction=3) BigDecimal quantity,@DecimalMin("0") @DecimalMax("999999999") @Digits(integer=9,fraction=2) BigDecimal unitPrice,Long patientId,@Size(max=200) String reference,LocalDateTime occurredAt){}
+ public record MovementInput(@NotNull @Positive Long medicineId,@NotBlank String type,@NotNull @DecimalMin("0.001") @DecimalMax("999999999") @Digits(integer=9,fraction=3) BigDecimal quantity,@DecimalMin("0") @DecimalMax("999999999") @Digits(integer=9,fraction=2) BigDecimal unitPrice,@Positive Long patientId,@Size(max=200) String reference,LocalDateTime occurredAt){}
  @Transactional public PharmacyMovement record(MovementInput input,Authentication a){
   reports.guard(a,"pharmacy");
   if(!List.of("RECEIPT","DISPENSE","ADJUST_IN","ADJUST_OUT").contains(input.type()))throw AnalyticsService.bad("Invalid movement type");
+  if(input.type().startsWith("ADJUST")&&(input.reference()==null||input.reference().isBlank()))throw new com.hms.validation.FormValidationException(Map.of("reference","Enter a reason for the stock adjustment."));
   PharmacyItem item=em.find(PharmacyItem.class,input.medicineId(),LockModeType.PESSIMISTIC_WRITE);
   if(item==null||"ARCHIVED".equals(item.status))throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Medicine not found");
   if(input.patientId()!=null&&em.find(Patient.class,input.patientId())==null)throw AnalyticsService.bad("Patient record does not exist");

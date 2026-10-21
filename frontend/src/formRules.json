@@ -1,0 +1,568 @@
+{
+  "common": {
+    "name": {
+      "type": "text",
+      "required": true,
+      "maxLength": 200
+    },
+    "status": {
+      "type": "select",
+      "required": true
+    }
+  },
+  "fields": {
+    "patientNumber": {
+      "type": "text",
+      "maxLength": 50,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
+      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+    },
+    "departmentId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "dateOfBirth": {
+      "type": "date",
+      "noFuture": true
+    },
+    "gender": {
+      "type": "select",
+      "options": [
+        "Female",
+        "Male",
+        "Other",
+        "Prefer not to say"
+      ]
+    },
+    "phone": {
+      "type": "tel",
+      "maxLength": 30
+    },
+    "address": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "emergencyContact": {
+      "type": "tel",
+      "maxLength": 30,
+      "label": "Emergency contact number"
+    },
+    "bloodGroup": {
+      "type": "select",
+      "options": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+      ]
+    },
+    "allergies": {
+      "type": "text",
+      "maxLength": 2000
+    },
+    "specialization": {
+      "type": "text",
+      "maxLength": 100
+    },
+    "licenseNumber": {
+      "type": "text",
+      "maxLength": 50,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
+      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+    },
+    "schedule": {
+      "type": "text",
+      "maxLength": 1000
+    },
+    "description": {
+      "type": "text",
+      "maxLength": 2000
+    },
+    "location": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "patientId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "doctorId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "date": {
+      "type": "date"
+    },
+    "time": {
+      "type": "time"
+    },
+    "reason": {
+      "type": "text",
+      "maxLength": 2000
+    },
+    "notes": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "ward": {
+      "type": "text",
+      "maxLength": 80
+    },
+    "bed": {
+      "type": "text",
+      "maxLength": 50
+    },
+    "admissionDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "dischargeDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "type": {
+      "type": "text",
+      "maxLength": 80
+    },
+    "visitDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "visitType": {
+      "type": "select",
+      "options": [
+        "OUTPATIENT",
+        "INPATIENT"
+      ]
+    },
+    "diagnosis": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "treatment": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "prescription": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "report": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "testName": {
+      "type": "text",
+      "maxLength": 150
+    },
+    "requestedAt": {
+      "type": "datetime-local",
+      "noFuture": true
+    },
+    "completedAt": {
+      "type": "datetime-local",
+      "noFuture": true
+    },
+    "sampleDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "sampleType": {
+      "type": "text",
+      "maxLength": 100
+    },
+    "result": {
+      "type": "text",
+      "maxLength": 4000
+    },
+    "referenceRange": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "medicineCode": {
+      "type": "text",
+      "maxLength": 50,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
+      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+    },
+    "category": {
+      "type": "text",
+      "maxLength": 100
+    },
+    "quantity": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 3
+    },
+    "reorderLevel": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 3
+    },
+    "unitPrice": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "expiryDate": {
+      "type": "date"
+    },
+    "supplier": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "appointmentId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "billDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "consultationCharge": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "laboratoryCharge": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "pharmacyCharge": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "admissionCharge": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "total": {
+      "type": "number",
+      "min": 0,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "dueDate": {
+      "type": "date"
+    },
+    "billId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "amount": {
+      "type": "number",
+      "min": 0.01,
+      "max": 999999999,
+      "decimals": 2
+    },
+    "method": {
+      "type": "select",
+      "options": [
+        "CASH",
+        "CARD",
+        "BANK_TRANSFER",
+        "INSURANCE",
+        "OTHER"
+      ]
+    },
+    "paymentDate": {
+      "type": "date",
+      "noFuture": true
+    },
+    "reference": {
+      "type": "text",
+      "maxLength": 200
+    },
+    "staffNumber": {
+      "type": "text",
+      "maxLength": 50,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
+      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+    },
+    "jobTitle": {
+      "type": "text",
+      "maxLength": 100
+    },
+    "email": {
+      "type": "email",
+      "maxLength": 254
+    },
+    "hireDate": {
+      "type": "date"
+    },
+    "employeeId": {
+      "type": "number",
+      "min": 1,
+      "max": 2147483647,
+      "integer": true,
+      "reference": true
+    },
+    "checkIn": {
+      "type": "time"
+    },
+    "checkOut": {
+      "type": "time"
+    },
+    "startDate": {
+      "type": "date"
+    },
+    "endDate": {
+      "type": "date"
+    },
+    "approvalStatus": {
+      "type": "select",
+      "options": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED"
+      ]
+    },
+    "fileReference": {
+      "type": "text",
+      "maxLength": 1000
+    }
+  },
+  "modules": {
+    "patients": {
+      "required": [
+        "patientNumber",
+        "dateOfBirth",
+        "gender",
+        "phone"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ],
+      "humanName": true,
+      "unique": [
+        "patientNumber"
+      ]
+    },
+    "doctors": {
+      "required": [
+        "specialization",
+        "departmentId",
+        "phone",
+        "licenseNumber"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ],
+      "humanName": true,
+      "unique": [
+        "licenseNumber"
+      ]
+    },
+    "departments": {
+      "required": [
+        "location"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ]
+    },
+    "appointments": {
+      "required": [
+        "patientId",
+        "doctorId",
+        "date",
+        "time",
+        "reason"
+      ],
+      "statuses": [
+        "SCHEDULED",
+        "PENDING",
+        "COMPLETED",
+        "CANCELLED",
+        "RESCHEDULED",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "SCHEDULED"
+    },
+    "admissions": {
+      "required": [
+        "patientId",
+        "ward",
+        "bed",
+        "admissionDate",
+        "type"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "DISCHARGED",
+        "CANCELLED",
+        "ARCHIVED"
+      ]
+    },
+    "medical-records": {
+      "required": [
+        "patientId",
+        "doctorId",
+        "visitDate",
+        "visitType",
+        "diagnosis",
+        "treatment"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "COMPLETED",
+        "ARCHIVED"
+      ]
+    },
+    "laboratory-tests": {
+      "required": [
+        "patientId",
+        "doctorId",
+        "testName",
+        "requestedAt"
+      ],
+      "statuses": [
+        "PENDING",
+        "SCHEDULED",
+        "PROCESSING",
+        "COMPLETED",
+        "CANCELLED",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "PENDING"
+    },
+    "pharmacy": {
+      "required": [
+        "medicineCode",
+        "category",
+        "quantity",
+        "reorderLevel",
+        "unitPrice",
+        "expiryDate"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ],
+      "unique": [
+        "medicineCode"
+      ]
+    },
+    "bills": {
+      "required": [
+        "patientId",
+        "billDate",
+        "total"
+      ],
+      "statuses": [
+        "UNPAID",
+        "PAID",
+        "PENDING",
+        "CANCELLED",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "UNPAID"
+    },
+    "payments": {
+      "required": [
+        "billId",
+        "amount",
+        "method",
+        "paymentDate"
+      ],
+      "statuses": [
+        "COMPLETED",
+        "PENDING",
+        "CANCELLED",
+        "REJECTED",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "COMPLETED"
+    },
+    "employees": {
+      "required": [
+        "staffNumber",
+        "departmentId",
+        "jobTitle",
+        "phone",
+        "email",
+        "hireDate"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ],
+      "humanName": true,
+      "unique": [
+        "staffNumber"
+      ]
+    },
+    "attendance": {
+      "required": [
+        "employeeId",
+        "date"
+      ],
+      "statuses": [
+        "PRESENT",
+        "ABSENT",
+        "ACTIVE",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "PRESENT"
+    },
+    "leave-records": {
+      "required": [
+        "employeeId",
+        "startDate",
+        "endDate",
+        "reason",
+        "approvalStatus"
+      ],
+      "statuses": [
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "CANCELLED",
+        "ARCHIVED"
+      ],
+      "defaultStatus": "PENDING"
+    },
+    "documents": {
+      "required": [
+        "patientId",
+        "fileReference"
+      ],
+      "statuses": [
+        "ACTIVE",
+        "ARCHIVED"
+      ]
+    }
+  }
+}

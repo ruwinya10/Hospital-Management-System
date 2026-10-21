@@ -5,5 +5,7 @@ import jakarta.persistence.*;import java.util.*;
  @Column(unique=true,nullable=false) public String username;
  @Column(nullable=false) public String passwordHash;
  public boolean enabled=true;
+ @Column(nullable=false,columnDefinition="boolean default false") public boolean deleted=false;
  @ManyToMany(fetch=FetchType.EAGER) @JoinTable(name="user_roles",joinColumns=@JoinColumn(name="user_id"),inverseJoinColumns=@JoinColumn(name="role_id")) public Set<Role> roles=new HashSet<>();
 }
+
