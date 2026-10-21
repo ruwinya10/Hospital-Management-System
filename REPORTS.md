@@ -11,7 +11,7 @@ Open **Reports** in the sidebar. It replaces the Documents tab; existing documen
 | Laboratory | Administrator, Doctor, Laboratory Staff |
 | Staff | Administrator |
 
-Patient accounts use their own patient portal and cannot access staff reports. The API checks these permissions independently of the interface. These are module permissions: staff are not restricted to individual assigned patients because staff-to-patient assignments are not stored by this scaffold. Reports omit clinical notes/results, patient contact details and staff leave reasons.
+Patients do not have login accounts; hospital staff maintain their records. The API checks these permissions independently of the interface. These are module permissions: staff are not restricted to individual assigned patients because staff-to-patient assignments are not stored by this scaffold. Reports omit clinical notes/results, patient contact details and staff leave reasons.
 
 ## Generate and export
 

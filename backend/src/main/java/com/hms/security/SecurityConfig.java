@@ -16,6 +16,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.*;
 import java.nio.charset.StandardCharsets;import java.util.*;
 @Configuration public class SecurityConfig {
+ public static final Set<String> STAFF_ROLES=Set.of("ADMIN","DOCTOR","NURSE","RECEPTIONIST","LAB","PHARMACIST","ACCOUNTANT");
+ public static boolean isStaff(com.hms.model.UserAccount user){return user.roles.stream().anyMatch(r->STAFF_ROLES.contains(r.name));}
  @Value("${hms.jwt.secret}") String secret;
  @Value("${hms.frontend.origin}") String origin;
  private final UserRepository users;
@@ -26,7 +28,7 @@ import java.nio.charset.StandardCharsets;import java.util.*;
   http.csrf(c->c.disable()).cors(c->{}).sessionManagement(s->s.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
   .authorizeHttpRequests(a->a.dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll().requestMatchers("/api/auth/login","/actuator/health").permitAll().requestMatchers(HttpMethod.OPTIONS,"/**").permitAll().anyRequest().authenticated())
   .addFilterBefore(new org.springframework.web.filter.OncePerRequestFilter(){@Override protected void doFilterInternal(HttpServletRequest req,HttpServletResponse res,FilterChain chain)throws java.io.IOException,ServletException{
-   String h=req.getHeader("Authorization");if(h!=null&&h.startsWith("Bearer ")){try{String username=Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(h.substring(7)).getPayload().getSubject();users.findByUsername(username).filter(u->u.enabled).ifPresent(u->{List<SimpleGrantedAuthority> roles=u.roles.stream().map(r->new SimpleGrantedAuthority("ROLE_"+r.name)).toList();SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username,null,roles));});}catch(Exception ignored){}}
+   String h=req.getHeader("Authorization");if(h!=null&&h.startsWith("Bearer ")){try{String username=Jwts.parser().verifyWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8))).build().parseSignedClaims(h.substring(7)).getPayload().getSubject();users.findByUsername(username).filter(u->u.enabled&&isStaff(u)).ifPresent(u->{List<SimpleGrantedAuthority> roles=u.roles.stream().map(r->new SimpleGrantedAuthority("ROLE_"+r.name)).toList();SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(username,null,roles));});}catch(Exception ignored){}}
    chain.doFilter(req,res);
   }},UsernamePasswordAuthenticationFilter.class);
  return http.build();}

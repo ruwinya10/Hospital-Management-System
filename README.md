@@ -29,12 +29,8 @@ All operational records are JPA entities in separate tables, but currently store
 ## Backups
 `scripts/backup.sh` is a manual MySQL dump with 30-day cleanup. Schedule it using cron/Task Scheduler for daily runs; configure separate weekly full backups and offsite retention. `scripts/restore.sh` restores a chosen dump (destructive; use only after testing on a staging database). **Neither scheduling nor backup verification is implemented.**
 
-## Staff and patient accounts
-All accounts sign in at the same frontend address. Administrators create accounts under **Users**, choosing one role and an initial password of 12–72 characters. Administrators can reset passwords and enable or disable accounts; they cannot disable their own account.
-
-For a patient account, first create a record under **Patient**, then select **PATIENT** under Users and link the account to that record. Each patient record can have one login. Patient logins open a read-only portal showing only their own appointments, medical records, laboratory results and bills. Those records must contain the matching patient record ID in their `patientId` detail field. Hospital staff manage those records through their permitted modules.
-
-Every user can open the gear icon labelled **Profile settings** to view their username and role and change their password using their current password. Staff navigation and dashboard totals follow module permissions, enforced by the backend as well as the frontend. Staff permissions remain module-level; they do not restrict a doctor to individually assigned patients. The patient portal enforces account-specific patient access.
+## Staff accounts
+All accounts belong to hospital staff. Administrators create accounts under **Users**, choosing a staff role and an initial password. Staff can change their own passwords under **Profile settings**. Patient records are maintained by staff; patients do not have login accounts or a patient portal. Existing patient-only accounts are blocked from authentication.
 
 ## Reports
 See [Reports & Analytics](REPORTS.md) for category permissions, calculation definitions, stock movements, filters and exports.
