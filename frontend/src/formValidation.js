@@ -27,7 +27,7 @@ export function fieldError(key,value,rule={}){
 export function recordRules(module,key){const config=rules.modules[module];return {...(rules.fields[key]||rules.common[key]||{}),required:key==='name'||key==='status'||config.required.includes(key),...(key==='status'?{options:config.statuses}:{})}}
 export function validateRecord(module,form){
  const errors={},config=rules.modules[module];if(!config)return {name:'Unknown record type.'};
- for(const key of new Set(['name','status',...config.required,...Object.keys(form)])){const error=fieldError(key,form[key],recordRules(module,key));if(error)errors[key]=error}
+ for(const key of new Set(['name','status',...config.required,...Object.keys(form)])){if(key==='departmentId'&&String(form.department||'').trim()&&!form.departmentId)continue;const error=fieldError(key,form[key],recordRules(module,key));if(error)errors[key]=error}
  if(module==='doctors'&&form.schedule){try{const slots=JSON.parse(form.schedule);if(Array.isArray(slots)&&slots.some(s=>!['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].includes(s.day)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.start)||!/^([01]\d|2[0-3]):[0-5]\d$/.test(s.end)||s.end<=s.start))errors.schedule='Choose a day and an end time after the start time for every availability.'}catch{}}
  if(config.humanName&&form.name?.trim()&&!/^[\p{L}\p{M} .’'-]{2,120}$/u.test(form.name.trim()))errors.name='Enter a person’s name using 2–120 letters, spaces, apostrophes, dots or hyphens.';
  const order=(start,end,message)=>{if(form[start]&&form[end]&&form[end]<form[start])errors[end]=message};

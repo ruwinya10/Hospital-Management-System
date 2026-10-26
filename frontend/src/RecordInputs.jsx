@@ -18,3 +18,16 @@ export function AvailabilityDetails({doctor}){
  if(!doctor)return null;let slots;try{slots=JSON.parse(doctor.schedule)}catch{}
  return <div className="mt-2 text-sm"><strong>Doctor availability</strong>{Array.isArray(slots)&&slots.length?slots.map((s,i)=><p key={i}>{s.day}: {s.start}–{s.end}</p>):<p>{doctor.schedule&&doctor.schedule!=='[]'?doctor.schedule:'No availability recorded.'}</p>}</div>;
 }
+
+export const departmentSuggestions=['Cardiology','Neurology','Orthopedics','Pediatrics','General Medicine','General Surgery','Obstetrics and Gynecology','Dermatology','ENT','Ophthalmology','Psychiatry','Radiology','Pathology','Emergency','Anesthesiology','Oncology','Urology','Nephrology','Pharmacy','Laboratory','Nursing','Administration','Human Resources','Finance'];
+export const specializationSuggestions=['General Practitioner','Cardiologist','Neurologist','Orthopedic Surgeon','Pediatrician','General Physician','General Surgeon','Obstetrician and Gynecologist','Dermatologist','ENT Specialist','Ophthalmologist','Psychiatrist','Radiologist','Pathologist','Emergency Physician','Anesthesiologist','Oncologist','Urologist','Nephrologist'];
+export const titleSuggestions={doctors:['Dr.','Prof.','Assoc. Prof.','Prof. Dr.'],patients:['Mr.','Mrs.','Ms.','Miss','Mx.','Master','Baby','Rev.'],employees:['Mr.','Mrs.','Ms.','Miss','Mx.','Dr.','Prof.','Rev.']};
+export function SuggestedInput({suggestions,...props}){
+ return <><input {...props} type="text" list={props.id+'-suggestions'}/><datalist id={props.id+'-suggestions'}>{suggestions.map(value=><option key={value} value={value}/>)}</datalist></>;
+}
+export function DepartmentInput({api,id,value,custom,onChange,required}){
+ const [departments,setDepartments]=useState([]);
+ useEffect(()=>{let active=true;api('/lookups/departments').then(rows=>{if(active)setDepartments(rows)}).catch(()=>{});return()=>{active=false}},[api]);
+ const selected=departments.find(d=>String(d.id)===String(value));
+ return <SuggestedInput id={id} required={required} maxLength={200} placeholder="Select or type a department" value={custom||selected?.name||''} suggestions={[...new Set([...departments.map(d=>d.name),...departmentSuggestions])]} onChange={e=>{const name=e.target.value,match=departments.find(d=>d.name.toLowerCase()===name.trim().toLowerCase());onChange(match?String(match.id):'',name)}}/>;
+}

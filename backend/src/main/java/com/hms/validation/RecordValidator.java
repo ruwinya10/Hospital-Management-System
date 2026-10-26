@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
   if(config.path("humanName").asBoolean()&&!item.name.matches("[\\p{L}\\p{M} .’'-]{2,120}"))errors.put("name","Enter a person's name using 2–120 letters, spaces, apostrophes, dots or hyphens.");
   if(!contains(config.path("statuses"),item.status))errors.put("status","Choose a valid status for this record.");
   Set<String> keys=new LinkedHashSet<>();config.path("required").forEach(n->keys.add(n.asText()));details.fieldNames().forEachRemaining(keys::add);
-  for(String key:keys){JsonNode rule=rules.path("fields").path(key);if(key.equals("name")||key.equals("status")){errors.put("name","Record details cannot contain reserved name or status fields.");continue;}String value=text(details,key),name=label(key);boolean required=contains(config.path("required"),key);
+  for(String key:keys){JsonNode rule=rules.path("fields").path(key);if(key.equals("name")||key.equals("status")){errors.put("name","Record details cannot contain reserved name or status fields.");continue;}String value=text(details,key),name=label(key);boolean required=contains(config.path("required"),key)&&!(key.equals("departmentId")&&!text(details,"department").isEmpty());
    if(value.isEmpty()){if(required)errors.put(key,name+" is required.");continue;}
    if(details.path(key).isContainerNode()){errors.put(key,name+" must be a single value.");continue;}
    if(value.length()>rule.path("maxLength").asInt(4000)){errors.put(key,name+" is too long (maximum "+rule.path("maxLength").asInt(4000)+" characters).");continue;}

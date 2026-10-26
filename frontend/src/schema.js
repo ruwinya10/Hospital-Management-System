@@ -1,5 +1,6 @@
 export const fields={
   "patients": [
+    "title",
     "dateOfBirth",
     "gender",
     "phone",
@@ -9,6 +10,7 @@ export const fields={
     "allergies"
   ],
   "doctors": [
+    "title",
     "specialization",
     "departmentId",
     "phone",
@@ -85,6 +87,7 @@ export const fields={
     "reference"
   ],
   "employees": [
+    "title",
     "departmentId",
     "jobTitle",
     "phone",

@@ -349,6 +349,14 @@
     "fileReference": {
       "type": "text",
       "maxLength": 1000
+    },
+    "title": {
+      "type": "text",
+      "maxLength": 80
+    },
+    "department": {
+      "type": "text",
+      "maxLength": 200
     }
   },
   "modules": {
