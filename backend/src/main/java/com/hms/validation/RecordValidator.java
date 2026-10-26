@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
    try{JsonNode slots=json.readTree(text(details,"schedule"));if(!slots.isArray())throw new IllegalArgumentException();for(JsonNode slot:slots){if(!List.of("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday").contains(text(slot,"day")))throw new IllegalArgumentException();String start=text(slot,"start"),end=text(slot,"end");if(!start.matches("(?:[01]\\d|2[0-3]):[0-5]\\d")||!end.matches("(?:[01]\\d|2[0-3]):[0-5]\\d")||!LocalTime.parse(end).isAfter(LocalTime.parse(start)))throw new IllegalArgumentException();}}
    catch(Exception e){errors.put("schedule","Choose a day and an end time after the start time for every availability.");}
   }
+  if(config.path("automaticName").asBoolean()&&(item.name==null||item.name.isBlank()))item.name=switch(module){case "appointments"->"Appointment";case "admissions"->"Admission";case "laboratory-tests"->"Laboratory test";case "payments"->"Payment";default->module;};
   item.name=item.name==null?"":item.name.trim();item.status=item.status==null?"":item.status.trim().toUpperCase(Locale.ROOT);
   if(item.name.isEmpty()||item.name.length()>200)errors.put("name","Name / Title is required and must not exceed 200 characters.");
   if(config.path("humanName").asBoolean()&&!item.name.matches("[\\p{L}\\p{M} .’'-]{2,120}"))errors.put("name","Enter a person's name using 2–120 letters, spaces, apostrophes, dots or hyphens.");
@@ -67,12 +68,24 @@ import java.util.regex.Pattern;
   if(module.equals("appointments")&&item.status.equals("COMPLETED")&&text(details,"date").compareTo(LocalDate.now(ZONE).toString())>0)errors.put("date","A future appointment cannot be marked completed.");
   if(module.equals("payments")&&!text(details,"method").equals("CASH")&&text(details,"reference").isEmpty())errors.put("reference","Enter a reference for a non-cash payment.");
   List<String> charges=List.of("consultationCharge","laboratoryCharge","pharmacyCharge","admissionCharge");if(module.equals("bills")&&charges.stream().anyMatch(k->!text(details,k).isEmpty())){BigDecimal total=charges.stream().map(k->number(details,k)).reduce(BigDecimal.ZERO,BigDecimal::add);if(number(details,"total").compareTo(total)!=0)errors.put("total","Total must equal all four service charges combined.");}
+  if(module.equals("appointments")&&!List.of("CANCELLED","COMPLETED","ARCHIVED").contains(item.status)&&!errors.containsKey("doctorId")&&!errors.containsKey("date")&&!errors.containsKey("time")){
+   try{Doctor doctor=em.find(Doctor.class,Long.valueOf(text(details,"doctorId")));JsonNode slots=json.readTree(text(details(doctor),"schedule"));String day=date(text(details,"date")).getDayOfWeek().toString();boolean dayFound=false,slotFound=false;
+    if(slots!=null&&slots.isArray())for(JsonNode slot:slots)if(text(slot,"day").equalsIgnoreCase(day)){dayFound=true;if(text(slot,"start").equals(text(details,"time"))&&text(slot,"end").equals(text(details,"slotEnd")))slotFound=true;}
+    if(!dayFound)errors.put("date","The doctor is not available on this day. Choose a date matching their availability.");else if(!slotFound)errors.put("time","Select one of the doctor's available time slots for this date.");
+   }catch(Exception e){errors.put("date","This doctor has no valid availability recorded. Update their availability before booking.");}
+  }
   if(errors.isEmpty())checkDatabase(item,module,details,config,errors);
   if(!errors.isEmpty())throw new FormValidationException(errors);
   item.details=details.toString();
  }
  private void order(JsonNode d,String start,String end,String message,Map<String,String> errors){if(!text(d,start).isEmpty()&&!text(d,end).isEmpty()&&!errors.containsKey(start)&&!errors.containsKey(end)&&text(d,end).compareTo(text(d,start))<0)errors.put(end,message);}
  private JsonNode details(BaseRecord r){try{JsonNode node=json.readTree(r.details);return node!=null&&node.isObject()?node:json.createObjectNode();}catch(Exception e){return json.createObjectNode();}}
+ private boolean overlappingSlots(JsonNode first,JsonNode second){
+  try{LocalTime start=LocalTime.parse(text(first,"time")),otherStart=LocalTime.parse(text(second,"time"));String endText=text(first,"slotEnd"),otherEndText=text(second,"slotEnd");
+   if(endText.isEmpty()||otherEndText.isEmpty())return start.equals(otherStart)||(endText.isEmpty()?(!start.isBefore(otherStart)&&start.isBefore(LocalTime.parse(otherEndText))):(!otherStart.isBefore(start)&&otherStart.isBefore(LocalTime.parse(endText))));
+   return start.isBefore(LocalTime.parse(otherEndText))&&otherStart.isBefore(LocalTime.parse(endText));
+  }catch(Exception e){return text(first,"time").equals(text(second,"time"));}
+ }
  private void checkDatabase(BaseRecord item,String module,JsonNode d,JsonNode config,Map<String,String> errors){
   if(config.path("unique").size()>0||module.equals("attendance")||module.equals("appointments")){
    List<? extends BaseRecord> records=em.createQuery("select r from "+item.getClass().getSimpleName()+" r",item.getClass()).getResultList();
@@ -80,7 +93,7 @@ import java.util.regex.Pattern;
     for(JsonNode unique:config.path("unique")){String key=unique.asText();if(!text(d,key).isEmpty()&&text(d,key).equalsIgnoreCase(text(other,key)))errors.put(key,label(key)+" already exists. Use a unique value.");}
     if("ARCHIVED".equals(existing.status))continue;
     if(module.equals("attendance")&&text(d,"employeeId").equals(text(other,"employeeId"))&&text(d,"date").equals(text(other,"date")))errors.put("date","An attendance record already exists for this employee and date.");
-    if(module.equals("appointments")&&!List.of("CANCELLED","COMPLETED","ARCHIVED").contains(item.status)&&!List.of("CANCELLED","COMPLETED","ARCHIVED").contains(existing.status)&&text(d,"doctorId").equals(text(other,"doctorId"))&&text(d,"date").equals(text(other,"date"))&&text(d,"time").substring(0,5).equals(text(other,"time").length()>=5?text(other,"time").substring(0,5):""))errors.put("time","This doctor already has an appointment at the selected date and time.");
+    if(module.equals("appointments")&&!List.of("CANCELLED","COMPLETED","ARCHIVED").contains(item.status)&&!List.of("CANCELLED","COMPLETED","ARCHIVED").contains(existing.status)&&text(d,"doctorId").equals(text(other,"doctorId"))&&text(d,"date").equals(text(other,"date"))&&overlappingSlots(d,other))errors.put("time","This doctor already has an appointment overlapping the selected time slot.");
    }
   }
   if(module.equals("payments")&&!List.of("CANCELLED","REJECTED","ARCHIVED","PENDING").contains(item.status)){

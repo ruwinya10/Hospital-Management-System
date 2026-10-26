@@ -357,6 +357,10 @@
     "department": {
       "type": "text",
       "maxLength": 200
+    },
+    "slotEnd": {
+      "type": "time",
+      "label": "Slot end"
     }
   },
   "modules": {
@@ -403,8 +407,7 @@
         "patientId",
         "doctorId",
         "date",
-        "time",
-        "reason"
+        "time"
       ],
       "statuses": [
         "SCHEDULED",
@@ -414,7 +417,8 @@
         "RESCHEDULED",
         "ARCHIVED"
       ],
-      "defaultStatus": "SCHEDULED"
+      "defaultStatus": "SCHEDULED",
+      "automaticName": true
     },
     "admissions": {
       "required": [
@@ -429,7 +433,8 @@
         "DISCHARGED",
         "CANCELLED",
         "ARCHIVED"
-      ]
+      ],
+      "automaticName": true
     },
     "medical-records": {
       "required": [
@@ -461,7 +466,8 @@
         "CANCELLED",
         "ARCHIVED"
       ],
-      "defaultStatus": "PENDING"
+      "defaultStatus": "PENDING",
+      "automaticName": true
     },
     "pharmacy": {
       "required": [
@@ -509,7 +515,8 @@
         "REJECTED",
         "ARCHIVED"
       ],
-      "defaultStatus": "COMPLETED"
+      "defaultStatus": "COMPLETED",
+      "automaticName": true
     },
     "employees": {
       "required": [

@@ -24,7 +24,7 @@ export function fieldError(key,value,rule={}){
  if(key==='dateOfBirth'&&v<`${Number(today().slice(0,4))-130}${today().slice(4)}`)return 'Date of birth cannot be more than 130 years ago.';
  return '';
 }
-export function recordRules(module,key){const config=rules.modules[module];return {...(rules.fields[key]||rules.common[key]||{}),required:key==='name'||key==='status'||config.required.includes(key),...(key==='status'?{options:config.statuses}:{})}}
+export function recordRules(module,key){const config=rules.modules[module];return {...(rules.fields[key]||rules.common[key]||{}),required:(key==='name'&&!config.automaticName)||key==='status'||config.required.includes(key),...(key==='status'?{options:config.statuses}:{})}}
 export function validateRecord(module,form){
  const errors={},config=rules.modules[module];if(!config)return {name:'Unknown record type.'};
  for(const key of new Set(['name','status',...config.required,...Object.keys(form)])){if(key==='departmentId'&&String(form.department||'').trim()&&!form.departmentId)continue;const error=fieldError(key,form[key],recordRules(module,key));if(error)errors[key]=error}
