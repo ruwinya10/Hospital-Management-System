@@ -464,10 +464,13 @@
         "expiryDate"
       ],
       "statuses": [
-        "ACTIVE",
+        "IN_STOCK",
+        "LOW_STOCK",
+        "OUT_OF_STOCK",
         "ARCHIVED"
       ],
-      "unique": []
+      "unique": [],
+      "defaultStatus": "IN_STOCK"
     },
     "bills": {
       "required": [
