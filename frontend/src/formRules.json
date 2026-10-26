@@ -15,7 +15,7 @@
       "type": "text",
       "maxLength": 50,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
-      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+      "patternMessage": "Use 2\u00e2\u20ac\u201c50 letters, numbers, dots, slashes, underscores or hyphens."
     },
     "departmentId": {
       "type": "number",
@@ -75,7 +75,7 @@
       "type": "text",
       "maxLength": 50,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
-      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+      "patternMessage": "Use 2\u00e2\u20ac\u201c50 letters, numbers, dots, slashes, underscores or hyphens."
     },
     "schedule": {
       "type": "text",
@@ -196,7 +196,7 @@
       "type": "text",
       "maxLength": 50,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
-      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+      "patternMessage": "Use 2\u00e2\u20ac\u201c50 letters, numbers, dots, slashes, underscores or hyphens."
     },
     "category": {
       "type": "text",
@@ -306,7 +306,7 @@
       "type": "text",
       "maxLength": 50,
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{1,49}$",
-      "patternMessage": "Use 2–50 letters, numbers, dots, slashes, underscores or hyphens."
+      "patternMessage": "Use 2\u00e2\u20ac\u201c50 letters, numbers, dots, slashes, underscores or hyphens."
     },
     "jobTitle": {
       "type": "text",
@@ -354,7 +354,6 @@
   "modules": {
     "patients": {
       "required": [
-        "patientNumber",
         "dateOfBirth",
         "gender",
         "phone"
@@ -364,9 +363,7 @@
         "ARCHIVED"
       ],
       "humanName": true,
-      "unique": [
-        "patientNumber"
-      ]
+      "unique": []
     },
     "doctors": {
       "required": [
@@ -460,7 +457,6 @@
     },
     "pharmacy": {
       "required": [
-        "medicineCode",
         "category",
         "quantity",
         "reorderLevel",
@@ -471,9 +467,7 @@
         "ACTIVE",
         "ARCHIVED"
       ],
-      "unique": [
-        "medicineCode"
-      ]
+      "unique": []
     },
     "bills": {
       "required": [
@@ -508,7 +502,6 @@
     },
     "employees": {
       "required": [
-        "staffNumber",
         "departmentId",
         "jobTitle",
         "phone",
@@ -520,9 +513,7 @@
         "ARCHIVED"
       ],
       "humanName": true,
-      "unique": [
-        "staffNumber"
-      ]
+      "unique": []
     },
     "attendance": {
       "required": [

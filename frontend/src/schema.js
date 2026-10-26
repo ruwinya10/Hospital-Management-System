@@ -1,7 +1,5 @@
 export const fields={
   "patients": [
-    "patientNumber",
-    "departmentId",
     "dateOfBirth",
     "gender",
     "phone",
@@ -61,7 +59,6 @@ export const fields={
     "report"
   ],
   "pharmacy": [
-    "medicineCode",
     "category",
     "quantity",
     "reorderLevel",
@@ -88,7 +85,6 @@ export const fields={
     "reference"
   ],
   "employees": [
-    "staffNumber",
     "departmentId",
     "jobTitle",
     "phone",

@@ -27,6 +27,12 @@ import java.util.regex.Pattern;
  @Transactional(readOnly=true) public void validate(BaseRecord item,String module){
   Map<String,String> errors=new LinkedHashMap<>();JsonNode config=rules.path("modules").path(module);ObjectNode details;
   try{JsonNode parsed=json.readTree(item.details==null?"{}":item.details);if(parsed==null||!parsed.isObject())throw new IllegalArgumentException();details=(ObjectNode)parsed;}catch(Exception e){throw new FormValidationException(Map.of("name","Record details must be a valid JSON object."));}
+  if(module.equals("patients"))details.remove("departmentId");
+  for(String generated:List.of("patientNumber","staffNumber","medicineCode"))details.remove(generated);
+  if(module.equals("doctors")&&text(details,"schedule").startsWith("[")){
+   try{JsonNode slots=json.readTree(text(details,"schedule"));if(!slots.isArray())throw new IllegalArgumentException();for(JsonNode slot:slots){if(!List.of("Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday").contains(text(slot,"day")))throw new IllegalArgumentException();String start=text(slot,"start"),end=text(slot,"end");if(!start.matches("(?:[01]\\d|2[0-3]):[0-5]\\d")||!end.matches("(?:[01]\\d|2[0-3]):[0-5]\\d")||!LocalTime.parse(end).isAfter(LocalTime.parse(start)))throw new IllegalArgumentException();}}
+   catch(Exception e){errors.put("schedule","Choose a day and an end time after the start time for every availability.");}
+  }
   item.name=item.name==null?"":item.name.trim();item.status=item.status==null?"":item.status.trim().toUpperCase(Locale.ROOT);
   if(item.name.isEmpty()||item.name.length()>200)errors.put("name","Name / Title is required and must not exceed 200 characters.");
   if(config.path("humanName").asBoolean()&&!item.name.matches("[\\p{L}\\p{M} .’'-]{2,120}"))errors.put("name","Enter a person's name using 2–120 letters, spaces, apostrophes, dots or hyphens.");
