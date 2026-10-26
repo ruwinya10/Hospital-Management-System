@@ -6,3 +6,5 @@ export function availability(value){try{const slots=JSON.parse(value||'[]');retu
 export function slotsForDate(schedule,date){if(!/^\d{4}-\d{2}-\d{2}$/.test(date||''))return [];const day=new Intl.DateTimeFormat('en-US',{weekday:'long',timeZone:'UTC'}).format(new Date(date+'T12:00:00Z'));return availability(schedule).filter(s=>s.day===day).sort((a,b)=>a.start.localeCompare(b.start))}
 
 export const entityModules={Patient:'patients',Doctor:'doctors',Department:'departments',Appointment:'appointments',Admission:'admissions',MedicalRecord:'medical-records',LaboratoryTest:'laboratory-tests',PharmacyItem:'pharmacy',Bill:'bills',Payment:'payments',Employee:'employees',Attendance:'attendance',LeaveRecord:'leave-records',Document:'documents',UserAccount:'users'};
+
+export function patientFileError(files){return files.some(file=>!/[.](docx?|pdf|png|jpe?g)$/i.test(file.name))?"Supported files: Word (.doc, .docx), PDF, PNG, JPG and JPEG.":files.some(file=>file.size===0||file.size>5*1024*1024)?"Each document must be non-empty and no larger than 5 MB.":""}

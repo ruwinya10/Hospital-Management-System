@@ -8,6 +8,7 @@ import java.util.*;
 @RestControllerAdvice public class ValidationErrors {
  @ExceptionHandler(FormValidationException.class) public ResponseEntity<?> form(FormValidationException ex){return ResponseEntity.badRequest().body(Map.of("message",ex.getMessage(),"errors",ex.errors));}
  @ExceptionHandler(MethodArgumentNotValidException.class) public ResponseEntity<?> bean(MethodArgumentNotValidException ex){Map<String,String> errors=new LinkedHashMap<>();ex.getBindingResult().getFieldErrors().forEach(e->errors.putIfAbsent(e.getField(),e.getField()+": "+e.getDefaultMessage()));return ResponseEntity.badRequest().body(Map.of("message","Please check the highlighted input values.","errors",errors));}
+ @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class) public ResponseEntity<?> tooLarge(){return ResponseEntity.badRequest().body(Map.of("message","The upload is too large. Select a file up to 5 MB."));}
  @ExceptionHandler(HttpMessageNotReadableException.class) public ResponseEntity<?> malformed(HttpMessageNotReadableException ex){return ResponseEntity.badRequest().body(Map.of("message","Invalid request. Check that numbers, dates and text have the correct format."));}
  @ExceptionHandler(DataIntegrityViolationException.class) public ResponseEntity<?> conflict(DataIntegrityViolationException ex){return ResponseEntity.status(409).body(Map.of("message","This record conflicts with existing data. Check for duplicate identifiers and try again."));}
 }
