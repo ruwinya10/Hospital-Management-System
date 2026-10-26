@@ -35,3 +35,11 @@ All accounts belong to hospital staff. Administrators create accounts under **Us
 ## Reports
 See [Reports & Analytics](REPORTS.md) for category permissions, calculation definitions, stock movements, filters and exports.
 
+
+## Local Nginx deployment
+See [Windows Nginx deployment](nginx/DEPLOYMENT.md). Start or update the local deployment with scripts/deploy-nginx.ps1, then open http://localhost.
+
+
+## Cloud demo deployment
+See [Render + Vercel + Aiven instructions](deploy/CLOUD-DEPLOYMENT.md). The root Dockerfile builds the Java backend; Vercel builds frontend/. Configure cloud credentials in Render only; never commit .local or .env secrets.
+

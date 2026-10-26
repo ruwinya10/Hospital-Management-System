@@ -1,3 +1,4 @@
+param([string]$FrontendOrigin='')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 Set-Location -LiteralPath $projectRoot
@@ -38,6 +39,8 @@ if (Test-LocalPort 8080) { Write-Host 'A server is already listening on port 808
 foreach ($entry in $config.PSObject.Properties) {
     if ($entry.Name -ne 'ROOT_PASSWORD') { [Environment]::SetEnvironmentVariable($entry.Name, [string]$entry.Value, 'Process') }
 }
+if ($FrontendOrigin) { $env:FRONTEND_ORIGIN=$FrontendOrigin }
 Write-Host 'Starting HMS backend at http://127.0.0.1:8080 (Ctrl+C stops the backend).'
-& $javaPath -jar $jarPath --server.address=127.0.0.1
+& $javaPath -jar $jarPath --server.address=127.0.0.1 --server.forward-headers-strategy=framework
 exit $LASTEXITCODE
+
